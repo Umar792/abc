@@ -105,10 +105,10 @@ module.exports = {
           }
         )
         .then((json) => {
-          getImageUrlFromAws(json.events).then(function (array) {
-            json.events = array;
-            return res.send(json);
-          });
+          // getImageUrlFromAws(json.events).then(function (array) {
+          //   json.events = array;
+          // });
+          return res.send(json);
         })
         .catch((err) => {
           return res.send("error is here: " + err);
@@ -130,10 +130,10 @@ module.exports = {
           //   }
         )
         .then((json) => {
-          getImageUrlFromAws(json.events).then(function (array) {
-            json.events = array;
-            return res.send(json);
-          });
+          // getImageUrlFromAws(json.events).then(function (array) {
+          //   json.events = array;
+          // });
+          return res.send(json);
         })
         .catch((err) => {
           return res.send("error ok: " + err);
@@ -148,10 +148,66 @@ module.exports = {
     tevoClient
       .getJSON(url)
       .then((json) => {
+        // console.log(json);
         return res.send(json);
       })
       .catch((err) => {
         return res.send("error: " + err);
+      });
+  },
+
+  // ----- search event by name
+  EventSearch: async (req, res) => {
+    const date = moment();
+    // let lat = req.query.lat;
+    let lon = -118.3275139;
+    // let lon = req.query.lon;
+    let lat = 33.9845124;
+    tevoClient
+      .getJSON(
+        `https://api.sandbox.ticketevolution.com/v9/events?q=${req.params.name}&fuzzy=true&per_page=` +
+          100 +
+          "&page=" +
+          1 +
+          "&occurs_at.gte=" +
+          encodeURIComponent(date.toISOString()) +
+          "&lat=" +
+          lat +
+          "&lon=" +
+          lon
+      )
+      .then((json) => {
+        return res.send(json);
+      })
+      .catch((err) => {
+        return res.send("error is here: " + err);
+      });
+  },
+  // ---- search by category
+  EventSearchByCategory: async (req, res) => {
+    const date = moment();
+    // let lat = req.query.lat;
+    let lon = -118.3275139;
+    // let lon = req.query.lon;
+    let lat = 33.9845124;
+    tevoClient
+      .getJSON(
+        `https://api.sandbox.ticketevolution.com/v9/events?category_id=${req.params.id}&category_tree=true&per_page=` +
+          100 +
+          "&page=" +
+          1 +
+          "&occurs_at.gte=" +
+          encodeURIComponent(date.toISOString()) +
+          "&lat=" +
+          lat +
+          "&lon=" +
+          lon
+      )
+      .then((json) => {
+        return res.send(json);
+      })
+      .catch((err) => {
+        return res.send("error is here: " + err);
       });
   },
 

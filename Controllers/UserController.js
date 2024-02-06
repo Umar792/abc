@@ -182,4 +182,17 @@ module.exports = {
       next(new ErrorHandler(error.message, 400));
     }
   },
+
+  // ---------------- Get All Users for Admin
+  AllUsersForAdmin: async (req, res, next) => {
+    try {
+      const users = await UserModal.find();
+      res.status(200).json({
+        success: true,
+        users,
+      });
+    } catch (error) {
+      next(new ErrorHandler(error.message, 400));
+    }
+  },
 };

@@ -13,6 +13,10 @@ router.get("/details/:id", controller.EventDetails);
 
 router.get("/event/details/:id", controller.TicketGroup);
 
+router.get("/event/search/:name", controller.EventSearch);
+
+router.get("/event/category/:id", controller.EventSearchByCategory);
+
 router.post("/order/create", controller.createOrder);
 
 router.post("/order/create/multiple", controller.createOrdermultiple);

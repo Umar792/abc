@@ -1,14 +1,17 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-
+// var morgan = require("morgan");
 // ---- dotenv
 require("dotenv").config();
 
 // ----cors
 const cors = require("cors");
-app.use(cors());
-
+const options = {
+  origin: "*",
+};
+app.use(cors(options));
+// app.use(morgan(":method :url :status :response-time"));
 // --- bodyParser
 var bodyParser = require("body-parser");
 // parse application/x-www-form-urlencoded
@@ -26,11 +29,19 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/user", require("./routes/UserRoutes"));
 app.use("/api/order", require("./routes/OrderRooute"));
 app.use("/api/payment", require("./routes/PaymentRoute"));
+app.use("/api/carousal", require("./routes/CrousalRoute"));
 app.use("/api/address", require("./routes/UserAddressRouter"));
 app.use("/api/transcation", require("./routes/TranscationRoute"));
 
 // --- custom Error Handling;
 app.use(require("./middleware/error"));
+
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "InstaPass Backend",
+  });
+});
 
 // --- server
 const server = app.listen(process.env.PORT, () => {

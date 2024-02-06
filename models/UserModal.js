@@ -27,6 +27,10 @@ const UserSchema = new Schema(
     Avatar: {
       type: String,
     },
+    role: {
+      type: String,
+      default: "user",
+    },
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date },
   },
