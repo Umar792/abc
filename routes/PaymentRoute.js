@@ -4,5 +4,6 @@ const controller = require("../Controllers/PaymentController");
 const TokenVerify = require("../middleware/TokenVerify");
 
 router.get("/generateClient", TokenVerify, controller.generateToken);
+router.post("/process/payment", controller.paymentProcess);
 
 module.exports = router;

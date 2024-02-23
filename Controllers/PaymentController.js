@@ -3,9 +3,12 @@ const ErrorHandler = require("../utils/errorHandler");
 
 const gateway = new braintree.BraintreeGateway({
   environment: braintree.Environment.Sandbox,
-  merchantId: "vy62r3kv6k9fhx3v",
-  publicKey: "9pg438q6vn93wd2p",
-  privateKey: "9e7fcd472ab031105113b53f50877445",
+  // merchantId: "vy62r3kv6k9fhx3v",
+  // publicKey: "9pg438q6vn93wd2p",
+  // privateKey: "9e7fcd472ab031105113b53f50877445",
+  merchantId: "2b35gwytxkrh8rqf",
+  publicKey: "gnxvhjhgjwwk5jk8",
+  privateKey: "9348d3bae509cc79659a95d2a47dab84",
 });
 
 module.exports = {
@@ -17,6 +20,30 @@ module.exports = {
         success: true,
         clientToken: clientToken.clientToken,
       });
+    } catch (error) {
+      next(new ErrorHandler(error, 400));
+    }
+  },
+  // ---- payment process
+  paymentProcess: async (req, res, next) => {
+    try {
+      const nonceFromTheClient = req.body.payment_method_nonce;
+      const { amount } = req.body;
+      // ---- generate the payment
+      gateway.transaction
+        .sale({
+          amount: amount,
+          paymentMethodNonce: nonceFromTheClient,
+          options: {
+            submitForSettlement: true,
+          },
+        })
+        .then((responsedata) => {
+          res.status(200).send(responsedata);
+        })
+        .catch((err) => {
+          res.status(400).send(responsedata);
+        });
     } catch (error) {
       next(new ErrorHandler(error, 400));
     }

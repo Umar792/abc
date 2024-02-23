@@ -8,17 +8,17 @@ const AdminVerify = require("../middleware/AdminVerify");
 // --- create
 router.post(
   "/create",
-  upload.single("file"),
   TokenVerify,
   AdminVerify("admin"),
+  upload.single("file"),
   controller.createCarousal
 );
 // ---- update the carousal
 router.post(
   "/update/:id",
-  upload.single("file"),
   TokenVerify,
   AdminVerify("admin"),
+  upload.single("file"),
   controller.updateCrusal
 );
 

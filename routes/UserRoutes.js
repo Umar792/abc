@@ -18,7 +18,12 @@ router.post("/verify", TokenVerify, controller.VerifyUser);
 router.post("/update/password", TokenVerify, controller.UpdatePassword);
 
 // ---- update User Profile
-router.post("/update/profile", TokenVerify, controller.UpdateProfile);
+router.post(
+  "/update/profile",
+  TokenVerify,
+  upload.single("file"),
+  controller.UpdateProfile
+);
 
 // ------- get user for admin
 router.post(

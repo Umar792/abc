@@ -173,6 +173,22 @@ module.exports = {
           new: true,
         }
       );
+      if (req.file) {
+        const userAavatar = User?.Avatar;
+        const filepath = path.join(__dirname, "../uploads", userAavatar);
+        fs.unlink(filepath, async (err) => {
+          if (err) {
+            console.log(`Error in file deleting ${err}`);
+            return res.status(400).json({ message: "Error in file deleting" });
+          } else {
+            console.log("file deleted successfuly");
+            const file = req.file.filename;
+            var fileUrl = path.join(file);
+            User.Avatar = fileUrl;
+            await User.save();
+          }
+        });
+      }
       res.status(200).json({
         success: true,
         message: "User updated successfully",
