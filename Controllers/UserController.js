@@ -161,49 +161,116 @@ module.exports = {
   },
 
   // ---- update profile
+  // UpdateProfile: async (req, res, next) => {
+  //   try {
+  //     const User = await UserModal.findById(req.user._id);
+  //     if (!User) {
+  //       return next(new ErrorHandler("User not found, Please try again", 400));
+  //     }
+  //     const UpdateUser = await UserModal.findByIdAndUpdate(
+  //       req.user._id,
+  //       req.body,
+  //       {
+  //         new: true,
+  //       }
+  //     );
+  //     if (req.file) {
+  //       const userAavatar = User?.Avatar;
+  //       if (userAavatar) {
+  //         const filepath = path.join(__dirname, "../uploads", userAavatar);
+  //         fs.unlink(filepath, async (err) => {
+  //           if (err) {
+  //             console.log(`Error in file deleting ${err}`);
+  //             return res
+  //               .status(400)
+  //               .json({ message: "Error in file deleting" });
+  //           } else {
+  //             console.log("file deleted successfuly");
+  //             const file = req.file.filename;
+  //             var fileUrl = path.join(file);
+  //             User.Avatar = fileUrl;
+  //             await User.save();
+  //           }
+  //         });
+  //       } else {
+  //         const file = req.file.filename;
+  //         var fileUrl = path.join(file);
+  //         User.Avatar = fileUrl;
+  //         await User.save();
+  //       }
+  //     }
+  //     res.status(200).json({
+  //       success: true,
+  //       message: "User updated successfully",
+  //       UpdateUser,
+  //     });
+  //   } catch (error) {
+  //     next(new ErrorHandler(error.message, 400));
+  //   }
+  // },
+
   UpdateProfile: async (req, res, next) => {
     try {
-      const User = await UserModal.findById(req.user._id);
-      if (!User) {
+      const user = await UserModal.findById(req.user._id);
+
+      if (!user) {
         return next(new ErrorHandler("User not found, Please try again", 400));
       }
-      const UpdateUser = await UserModal.findByIdAndUpdate(
+
+      const updatedUser = await UserModal.findByIdAndUpdate(
         req.user._id,
         req.body,
         {
           new: true,
         }
       );
+
       if (req.file) {
-        const userAavatar = User?.Avatar;
-        if (userAavatar) {
-          const filepath = path.join(__dirname, "../uploads", userAavatar);
+        const userAvatar = user?.Avatar;
+
+        if (userAvatar) {
+          const filepath = path.join(__dirname, "../uploads", userAvatar);
+
           fs.unlink(filepath, async (err) => {
             if (err) {
               console.log(`Error in file deleting ${err}`);
               return res
                 .status(400)
                 .json({ message: "Error in file deleting" });
-            } else {
-              console.log("file deleted successfuly");
-              const file = req.file.filename;
-              var fileUrl = path.join(file);
-              User.Avatar = fileUrl;
-              await User.save();
             }
+
+            console.log("File deleted successfully");
+            const file = req.file.filename;
+            const fileUrl = path.join(file);
+            user.Avatar = fileUrl;
+            await user.save();
+
+            res.status(200).json({
+              success: true,
+              message: "User updated successfully",
+              updatedUser,
+            });
           });
         } else {
           const file = req.file.filename;
-          var fileUrl = path.join(file);
-          User.Avatar = fileUrl;
-          await User.save();
+          const fileUrl = path.join(file);
+          user.Avatar = fileUrl;
+          await user.save();
+
+          res.status(200).json({
+            success: true,
+            message: "User updated successfully",
+            updatedUser,
+          });
         }
+      } else {
+        // If there's no file, respond without file handling
+        res.status(200).json({
+          success: true,
+          message: "User updated successfully",
+          updatedUser,
+        });
       }
-      res.status(200).json({
-        success: true,
-        message: "User updated successfully",
-        UpdateUser,
-      });
     } catch (error) {
       next(new ErrorHandler(error.message, 400));
     }

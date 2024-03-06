@@ -7,10 +7,11 @@ module.exports = {
   // ----- create the carousal
   createCarousal: async (req, res, next) => {
     try {
-      const { heading, paragraph } = req.body;
-      if (!heading || !paragraph) {
+      const { heading, paragraph, event } = req.body;
+      const parseEvent = JSON.parse(req.body.event);
+      if (!paragraph || !event) {
         return next(
-          new ErrorHandler("Plaese enter heading and paragraph", 400)
+          new ErrorHandler("Plaese enter paragraph and select the event", 400)
         );
       }
       if (!req.file) {
@@ -22,7 +23,7 @@ module.exports = {
         // console.log(fileUrl);
       }
       await CraousalModal.create({
-        heading: heading,
+        event: parseEvent,
         paragraph: paragraph,
         image: fileUrl,
       });
@@ -63,14 +64,14 @@ module.exports = {
             // res.status(400).json({ message: "Error in file deleting" });
           } else {
             console.log("file deleted successfuly");
-            
+
             // res.status(400).json({ message: "file deleting" });
           }
         });
         const file = req.file.filename;
-            const fileUrl = path.join(file);
-            console.log(fileUrl);
-            carousal.image = fileUrl;
+        const fileUrl = path.join(file);
+        console.log(fileUrl);
+        carousal.image = fileUrl;
       }
 
       // Save the updated carousel
@@ -82,6 +83,48 @@ module.exports = {
         message: "Carousel updated successfully",
       });
     } catch (error) {
+      next(new ErrorHandler(error.message, 400));
+    }
+  },
+  // ------ get all events
+  GetCraousal: async (req, res, next) => {
+    try {
+      const events = await CraousalModal.find();
+      res.status(200).json({
+        success: true,
+        events,
+      });
+    } catch (error) {
+      next(new ErrorHandler(error.message, 400));
+    }
+  },
+  // ---- delete carousal
+  DeleteCarousal: async (req, res, next) => {
+    try {
+      const event = await CraousalModal.findById(req.params.id);
+
+      await CraousalModal.findByIdAndDelete(req.params.id);
+      if (!event) {
+        return next(new ErrorHandler("No Event found", 400));
+      }
+      if (event.image) {
+        const filepath = path.join(__dirname, "../uploads", event.image);
+
+        fs.unlink(filepath, async (err) => {
+          if (err) {
+            console.log(`Error in file deleting ${err}`);
+            return res.status(400).json({ message: "Error in file deleting" });
+          }
+
+          console.log("File deleted successfully");
+        });
+      }
+      res.status(200).json({
+        success: true,
+        message: "Carousal deleted successfully",
+      });
+    } catch (error) {
+      console.log(error);
       next(new ErrorHandler(error.message, 400));
     }
   },

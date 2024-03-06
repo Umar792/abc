@@ -7,13 +7,13 @@ router.get("/create", TokenVerify, controller.createtranscation);
 
 router.post("/get/all/transcation", TokenVerify, controller.allTrnscations);
 
-router.get("/all/:id", controller.findAll);
+router.post("/all/:id", controller.findAll);
 
 router.get("/details/:id", controller.EventDetails);
 
 router.get("/event/details/:id", controller.TicketGroup);
 
-router.get("/event/search/:name", controller.EventSearch);
+router.post("/event/search/:name", controller.EventSearch);
 
 router.get("/event/category/:id", controller.EventSearchByCategory);
 

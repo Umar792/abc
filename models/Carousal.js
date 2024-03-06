@@ -9,12 +9,13 @@ const CarousalSliderSchema = new Schema({
   },
   heading: {
     type: String,
-    required: [true, "Plaese enter the heading text"],
+    // required: [true, "Plaese enter the heading text"],
   },
   paragraph: {
     type: String,
     required: [true, "Plaese enter the paragrah tex"],
   },
+  event: [{}],
 });
 
 const CraousalModal = mongoose.model("carousal", CarousalSliderSchema);

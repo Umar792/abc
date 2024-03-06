@@ -22,4 +22,15 @@ router.post(
   controller.updateCrusal
 );
 
+// ---- get carousal
+router.get("/get/carousal", controller.GetCraousal);
+
+// ----- delete event
+router.delete(
+  "/delete/:id",
+  TokenVerify,
+  AdminVerify("admin"),
+  controller.DeleteCarousal
+);
+
 module.exports = router;

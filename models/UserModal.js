@@ -12,7 +12,7 @@ const UserSchema = new Schema(
     },
     phoneNumber: {
       type: String,
-      required: [true, "Please Enter Your Phone Number"],
+      // required: [true, "Please Enter Your Phone Number"],
     },
     email: {
       type: String,

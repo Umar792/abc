@@ -61,4 +61,16 @@ module.exports = {
       next(new ErrorHandler(error.message, 400));
     }
   },
+  // ------ get all orders for admin
+  getAllOrdersForAdmin: async (req, res, next) => {
+    try {
+      const orders = await OrderModal.find();
+      res.status(200).json({
+        success: true,
+        orders,
+      });
+    } catch (error) {
+      next(new ErrorHandler(error.message, 400));
+    }
+  },
 };

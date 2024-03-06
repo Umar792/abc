@@ -80,11 +80,12 @@ module.exports = {
     let per_page = 21;
     //   typeof req.query.per_page !== "undefined" ? req.query.per_page : 10;
     let date = moment();
-    // let lat = req.query.lat;
+    // let lat = req.body?.location?.lat;
     let lon = -118.3275139;
-    // let lon = req.query.lon;
+    // let lon = req.body?.location?.lon;
     let lat = 33.9845124;
     //Search based on longitude lattitude
+    console.log(req.params.id);
     if (typeof lat !== "undefined" && typeof lon !== "undefined") {
       tevoClient
         .getJSON(
@@ -110,6 +111,7 @@ module.exports = {
           // });
           return res.send(json);
         })
+
         .catch((err) => {
           return res.send("error is here: " + err);
         });
@@ -159,10 +161,11 @@ module.exports = {
   // ----- search event by name
   EventSearch: async (req, res) => {
     const date = moment();
-    // let lat = req.query.lat;
-    let lon = -118.3275139;
-    // let lon = req.query.lon;
-    let lat = 33.9845124;
+    console.log(req.body, "from serach");
+    let lat = req.body?.location?.lat;
+    // let lon = -118.3275139;
+    let lon = req.body?.location?.lon;
+    // let lat = 33.9845124;
     tevoClient
       .getJSON(
         `https://api.sandbox.ticketevolution.com/v9/events?q=${req.params.name}&fuzzy=true&per_page=` +
@@ -170,11 +173,12 @@ module.exports = {
           "&page=" +
           1 +
           "&occurs_at.gte=" +
-          encodeURIComponent(date.toISOString()) +
-          "&lat=" +
-          lat +
-          "&lon=" +
-          lon
+          encodeURIComponent(date.toISOString())
+        // +
+        // "&lat=" +
+        // lat +
+        // "&lon=" +
+        // lon
       )
       .then((json) => {
         return res.send(json);
@@ -197,11 +201,12 @@ module.exports = {
           "&page=" +
           1 +
           "&occurs_at.gte=" +
-          encodeURIComponent(date.toISOString()) +
-          "&lat=" +
-          lat +
-          "&lon=" +
-          lon
+          encodeURIComponent(date.toISOString())
+        // +
+        // "&lat=" +
+        // lat +
+        // "&lon=" +
+        // lon
       )
       .then((json) => {
         return res.send(json);
