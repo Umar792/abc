@@ -16,4 +16,7 @@ router.get(
   controller.getAllOrdersForAdmin
 );
 
+// ---- get pass in google valut
+router.post("/GetPassInGoogleWallet", controller.GetPassToGoogleWallet);
+
 module.exports = router;
