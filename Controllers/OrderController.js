@@ -123,14 +123,13 @@ module.exports = {
   printEticket: async function (req, res) {
     // ... existing code ...
     const { orderId, itemId } = req.params;
-    console.log(orderId, itemId);
-    // const url =
-    // "https://api.sandbox.ticketevolution.com/v9/orders/" + orderId + "/print";
     const url =
-      "https://api.sandbox.ticketevolution.com/v9/orders/" +
-      orderId +
-      "/print_etickets?item_id=" +
-      itemId;
+      "https://api.sandbox.ticketevolution.com/v9/orders/" + orderId + "/print";
+    // const url =
+    //   "https://api.sandbox.ticketevolution.com/v9/orders/" +
+    //   orderId +
+    //   "/print_etickets?item_id=" +
+    //   itemId;
     tevoClient
       .getJSON(url)
       .then((json) => {
