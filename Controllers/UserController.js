@@ -5,12 +5,27 @@ const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const path = require("path");
 
+const TevoClient = require("ticketevolution-node");
+// const API_TOKEN = "eebbfa6848026f8e3f6b1ac5f87e1e46";
+// const API_SECRET_KEY = "iEzrOJOJ0RTDqRXOnHAZX5ceyfdGITbNy1qd2EXV";
+const API_TOKEN = "10cbbac87aa33cf9818fc1046bca0044";
+const API_SECRET_KEY = "7bThxZPz3L+KdAdGsjcM9c99mCoyvXt3jH2MDy0/";
+const X_Signature = "z0g8oHXZyOi7Is0qM0KWVvgY9VQLRSadommuh0q6nuQ=";
+const moment = require("moment");
+const S3Client = require("./s3_list");
+const Promise = require("bluebird");
+
+const tevoClient = new TevoClient({
+  apiToken: API_TOKEN,
+  apiSecretKey: API_SECRET_KEY,
+});
+
+
 module.exports = {
   // ----- User Registration
   UserRegisration: async (req, res, next) => {
     try {
       //   -- get Data from the body
-      console.log(req.body);
       const { firstName, lastName, phoneNumber, email, password } = req.body;
       if (!firstName) {
         return next(new ErrorHandler("Plaese Enter Your First Name", 400));
@@ -27,6 +42,8 @@ module.exports = {
       if (!password) {
         return next(new ErrorHandler("Plaese Enter Your password", 400));
       }
+
+
 
       //   ----------- know check is User Already Registered
       const isUser = await UserModal.findOne({ email });
@@ -55,20 +72,55 @@ module.exports = {
         var fileUrl = path.join(file);
         // console.log(fileUrl);
       }
-      //   ---- if not of user then create new User
-      const user = await UserModal.create({
-        email: email,
-        password: password,
-        firstName: firstName,
-        lastName: lastName,
-        phoneNumber: phoneNumber,
-        Avatar: fileUrl,
+
+
+
+      // ========== create client in ticket Evoulation api 
+      // var client_id;
+      const requestBody = {
+        "clients": [{
+          "name": firstName,
+          "email_addresses": [
+            {
+              "address": email
+            }
+          ],
+          "addresses": [
+            {
+              "region": "NJ",
+              "country_code": "US",
+              "postal_code": "07307",
+              "street_address": "333 Washington St Suite 302",
+              "locality": "Jersey City"
+            }]
+        }]
+      }
+      const url = 'https://api.sandbox.ticketevolution.com/v9/clients';
+      tevoClient.postJSON(url, requestBody).then(async (json) => {
+        console.log(json.clients[0]?.id);
+        // return res.send(json);
+        var client_id = json.clients[0]?.id
+        var email_addressesId = json.clients[0]?.email_addresses[0]?.id;
+        //   ---- if not of user then create new User
+        const user = await UserModal.create({
+          email: email,
+          password: password,
+          firstName: firstName,
+          lastName: lastName,
+          phoneNumber: phoneNumber,
+          Avatar: fileUrl,
+          clientId: client_id,
+          emailAddressId: email_addressesId
+        });
+        res.status(200).json({
+          success: true,
+          message: `Registration Successfully`,
+          user: user,
+        });
+      }).catch((error) => {
+        return next(new ErrorHandler(error.message, 400));
       });
-      res.status(200).json({
-        success: true,
-        message: `Registration Successfully`,
-        user: user,
-      });
+
     } catch (error) {
       next(new ErrorHandler(error.message, 400));
     }
@@ -288,4 +340,57 @@ module.exports = {
       next(new ErrorHandler(error.message, 400));
     }
   },
+
+  // ---- delete user profile --- admin route
+  DeleteUserProfiel: async (req, res, next) => {
+    try {
+      const user = await UserModal.findById(req.params.id);
+      if (!user) {
+        return next(
+          new ErrorHandler(`User not found at this id ${req.params.id}`, 400)
+        );
+      }
+      await UserModal.findByIdAndDelete(req.params.id);
+      const users = await UserModal.find();
+      res.status(200).json({
+        success: true,
+        message: "User deleted successfully",
+        users,
+      });
+    } catch (error) {
+      next(new ErrorHandler(error.message, 400));
+    }
+  },
+  // ------ update user role
+  RoleUpdate: async (req, res, next) => {
+    try {
+      const user = await UserModal.findById(req.body.id);
+      if (!user) {
+        return next(
+          new ErrorHandler(`User not found at this id ${req.params.id}`, 400)
+        );
+      }
+
+      user.role = req.body.role;
+      await user.save();
+      const users = await UserModal.find();
+      res.status(200).json({
+        success: true,
+        message: "Role Updated Successfully",
+        users,
+      });
+    } catch (error) {
+      next(new ErrorHandler(error.message, 400));
+    }
+  },
+
+  // -------  find client information from the ticket api 
+  ClientDetails: async (req, res, next) => {
+    const url = 'https://api.sandbox.ticketevolution.com/v9/clients/' + req.params.id;
+    tevoClient.getJSON(url).then((json) => {
+      return res.send(json);
+    }).catch((err) => {
+      return res.send('error: ' + err);
+    });
+  }
 };

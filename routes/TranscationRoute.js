@@ -3,7 +3,9 @@ const router = express.Router();
 const controller = require("../Controllers/TranscationController");
 const TokenVerify = require("../middleware/TokenVerify");
 
-router.get("/create", TokenVerify, controller.createtranscation);
+router.get("/create",
+    TokenVerify,
+    controller.createtranscation);
 
 router.post("/get/all/transcation", TokenVerify, controller.allTrnscations);
 

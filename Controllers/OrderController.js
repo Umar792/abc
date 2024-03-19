@@ -2,6 +2,17 @@ const OrderModal = require("../models/OrderModal");
 const ErrorHandler = require("../utils/errorHandler");
 const { GoogleAuth } = require("google-auth-library");
 const jwt = require("jsonwebtoken");
+const TevoClient = require("ticketevolution-node");
+// const API_TOKEN = "eebbfa6848026f8e3f6b1ac5f87e1e46";
+// const API_SECRET_KEY = "iEzrOJOJ0RTDqRXOnHAZX5ceyfdGITbNy1qd2EXV";
+const API_TOKEN = "10cbbac87aa33cf9818fc1046bca0044";
+const API_SECRET_KEY = "7bThxZPz3L+KdAdGsjcM9c99mCoyvXt3jH2MDy0/";
+const X_Signature = "z0g8oHXZyOi7Is0qM0KWVvgY9VQLRSadommuh0q6nuQ=";
+
+const tevoClient = new TevoClient({
+  apiToken: API_TOKEN,
+  apiSecretKey: API_SECRET_KEY,
+});
 
 // TODO: Define Issuer ID
 const issuerId = "3388000000022328102";
@@ -48,6 +59,7 @@ module.exports = {
         price,
         qty,
         order_Id,
+        item_id,
         cart,
       } = req.body;
       const newOrder = await OrderModal.create({
@@ -69,6 +81,7 @@ module.exports = {
         service_fee: service_fee,
         tax: tax,
         order_Id: order_Id,
+        item_id: item_id,
       });
       res.status(200).json({
         success: true,
@@ -105,6 +118,61 @@ module.exports = {
       next(new ErrorHandler(error.message, 400));
     }
   },
+
+  // ---- print the order
+  printEticket: async function (req, res) {
+    // ... existing code ...
+    const { orderId, itemId } = req.params;
+    console.log(orderId, itemId);
+    // const url =
+    // "https://api.sandbox.ticketevolution.com/v9/orders/" + orderId + "/print";
+    const url =
+      "https://api.sandbox.ticketevolution.com/v9/orders/" +
+      orderId +
+      "/print_etickets?item_id=" +
+      itemId;
+    tevoClient
+      .getJSON(url)
+      .then((json) => {
+        return res.send(json);
+      })
+      .catch((err) => {
+        return res.send("error: " + err);
+      });
+  },
+
+  // ----- create shipment
+  CreateShipMent: async (req, res, next) => {
+    const requestBody = req.body;
+    const url =
+      "https://api.sandbox.ticketevolution.com/v9/shipments/suggestion";
+    tevoClient
+      .postJSON(url, requestBody)
+      .then((json) => {
+        return res.send(json);
+      })
+      .catch((err) => {
+        return res.send("error: " + err);
+      });
+  },
+
+  // --- send to email
+  sendEmailNotify: function (req, res) {
+    const requestBody = req.body;
+    const url =
+      "https://api.sandbox.ticketevolution.com/v9/orders/" +
+      req.query.order_id +
+      "/email_etickets_link";
+    tevoClient
+      .postJSON(url, requestBody)
+      .then((json) => {
+        return res.send(json);
+      })
+      .catch((err) => {
+        return res.send("error: " + err);
+      });
+  },
+
   // --- get pass to googlr wallet
   GetPassToGoogleWallet: async (req, res, next) => {
     try {

@@ -33,4 +33,23 @@ router.post(
   controller.AllUsersForAdmin
 );
 
+// --- delete user profile
+router.delete(
+  "/delete/:id",
+  TokenVerify,
+  AdminVerify("admin"),
+  controller.DeleteUserProfiel
+);
+
+// --- role update
+router.put(
+  "/role/update",
+  TokenVerify,
+  AdminVerify("admin"),
+  controller.RoleUpdate
+);
+
+// ------ get client details 
+router.get("/client/:id", controller.ClientDetails)
+
 module.exports = router;

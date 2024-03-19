@@ -85,7 +85,7 @@ module.exports = {
     // let lon = req.body?.location?.lon;
     let lat = 33.9845124;
     //Search based on longitude lattitude
-    console.log(req.params.id);
+    // console.log(req.params.id);
     if (typeof lat !== "undefined" && typeof lon !== "undefined") {
       tevoClient
         .getJSON(
@@ -161,7 +161,7 @@ module.exports = {
   // ----- search event by name
   EventSearch: async (req, res) => {
     const date = moment();
-    console.log(req.body, "from serach");
+    // console.log(req.body, "from serach");
     let lat = req.body?.location?.lat;
     // let lon = -118.3275139;
     let lon = req.body?.location?.lon;
@@ -234,9 +234,21 @@ module.exports = {
   },
 
   //   --------- now orders
-  createOrder: async (req, res) => {
-    const { id, price, qty, type, amount, service_fee, tax, payments, name } =
-      req.body;
+  createOrder: async (req, res, next) => {
+    const {
+      id,
+      price,
+      qty,
+      type,
+      amount,
+      service_fee,
+      tax,
+      payments,
+      name,
+      client_id,
+      email_address_id,
+    } = req.body;
+    console.log(JSON.stringify(req.body), "client_id");
 
     const orderData = {
       orders: [
@@ -251,9 +263,12 @@ module.exports = {
                 },
               ],
               type: type,
-              ship_to_name: "Jackie Martinoski",
+              ship_to_name: "plkubaid",
+              // email_address_id: email_address_id,
+              // shiptoName: req.user.firstName,
+              shiptoEmail: "plkubaid@gmail.com",
               email_address_attributes: {
-                address: "jackie@ticketevolution.com",
+                address: "plkubaid@gmail.com",
               },
             },
           ],
@@ -264,46 +279,51 @@ module.exports = {
           ],
           service_fee: 0,
           tax: 0,
+          // seller_id: 3038,
+          // buyer_id: 3038,
+          // ---- my add
           seller_id: 2760,
           buyer_id: 3161,
-          buyer_reference_number: "3161",
+          // --- office id as seller id
+          // client_id: client_id,
+          // buyer_reference_number: "3161",
+          // tax_signature: "9166e5ac-c663-4236-ae8b-76eb890a0468",
+          // buyer_id: 8918,
+          buyer_reference_number: "8918",
           external_notes: "These notes will be visible to all parties",
           internal_notes:
             "These notes will be visible only to your office (1937)",
         },
       ],
+      // orders: [
+      //   {
+      //     shipped_items: [
+      //       {
+      //         type: type,
+      //         email_address_id: email_address_id,
+      //         items: [
+      //           {
+      //             ticket_group_id: id,
+      //             price: qty,
+      //             quantity: price,
+      //             // ticket_group_signature:
+      //             //   "dTZuZ3BEQit0RTFicng0RXMzOEI0Z2h3UDRxNXdqdVdlN0srYXMzYjFLND0tLW5STkNmUlpPMzJiSUplTzhwR3hQcmc9PQ==--86f1de9f4585b4f3116d8b7ec8b8f5006672f91c",
+      //           },
+      //         ],
+      //       },
+      //     ],
+      //     //  "billing_address_id":"639548",
+      //     seller_id: 8918,
+      //     client_id: client_id,
+      //     instructions: "These instructions will be visible to everyone",
+      //   },
+      // ],
     };
 
     const url = "https://api.sandbox.ticketevolution.com/v9/orders";
     try {
       const response = await tevoClient.postJSON(url, orderData);
 
-      // try {
-      //   var neworder = await OrderModal.create({
-      //     totalAmount: 200,
-      //     orderItems: [
-      //       {
-      //         items: [
-      //           {
-      //             ticket_group_id: id,
-      //             splits: qty,
-      //             price: price,
-      //             name: name,
-      //           },
-      //         ],
-      //         type: type,
-      //         shiptoName: req.user.firstName,
-      //         shiptoEmail: req.user.email,
-      //         payments: "evopay",
-      //         service_fee: 20,
-      //         tax: 20,
-      //       },
-      //     ],
-      //   });
-      // } catch (error) {
-      //   return next(new ErrorHandler(error.message, 400));
-      // }
-      // console.log(neworder);
       return res.status(200).send(response);
     } catch (err) {
       return res.send("Error: " + err);

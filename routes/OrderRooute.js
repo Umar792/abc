@@ -8,6 +8,12 @@ router.post("/create", tokenVerify, controller.createOrder);
 
 router.post("/get/all", tokenVerify, controller.getUserOrders);
 
+router.post(
+  "/printEticket/:orderId/:itemId",
+  tokenVerify,
+  controller.printEticket
+);
+
 // ------ Admin Routes
 router.get(
   "/admin/orders",
@@ -15,6 +21,12 @@ router.get(
   AdminVerify("admin"),
   controller.getAllOrdersForAdmin
 );
+
+// ---- print
+router.post("/print/:orderId/:itemId", controller.printEticket);
+
+// ---- create shipment
+router.post("/Createshipment", controller.CreateShipMent);
 
 // ---- get pass in google valut
 router.post("/GetPassInGoogleWallet", controller.GetPassToGoogleWallet);

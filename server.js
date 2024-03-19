@@ -26,13 +26,13 @@ require("./DB/conn");
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Routes
+app.use("/api/event", require("./routes/Event"));
 app.use("/api/user", require("./routes/UserRoutes"));
 app.use("/api/order", require("./routes/OrderRooute"));
 app.use("/api/payment", require("./routes/PaymentRoute"));
 app.use("/api/carousal", require("./routes/CrousalRoute"));
 app.use("/api/address", require("./routes/UserAddressRouter"));
 app.use("/api/transcation", require("./routes/TranscationRoute"));
-
 // --- custom Error Handling;
 app.use(require("./middleware/error"));
 

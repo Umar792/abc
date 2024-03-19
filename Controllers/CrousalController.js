@@ -103,10 +103,10 @@ module.exports = {
     try {
       const event = await CraousalModal.findById(req.params.id);
 
-      await CraousalModal.findByIdAndDelete(req.params.id);
       if (!event) {
         return next(new ErrorHandler("No Event found", 400));
       }
+      await CraousalModal.findByIdAndDelete(req.params.id);
       if (event.image) {
         const filepath = path.join(__dirname, "../uploads", event.image);
 

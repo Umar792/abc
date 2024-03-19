@@ -65,6 +65,10 @@ const OrderSchema = new Schema(
       type: Number,
       required: [true, "Please Enter Order Id"],
     },
+    item_id: {
+      type: Number,
+      required: [true, "Please Enter Order Id"],
+    },
   },
   {
     timestamps: true,
