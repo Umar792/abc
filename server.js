@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-// var morgan = require("morgan");
+var morgan = require("morgan");
 // ---- dotenv
 require("dotenv").config();
 
@@ -11,7 +11,7 @@ const options = {
   origin: "*",
 };
 app.use(cors(options));
-// app.use(morgan(":method :url :status :response-time"));
+app.use(morgan(":method :url :status :response-time"));
 // --- bodyParser
 var bodyParser = require("body-parser");
 // parse application/x-www-form-urlencoded

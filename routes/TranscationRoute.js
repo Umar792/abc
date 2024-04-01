@@ -3,9 +3,7 @@ const router = express.Router();
 const controller = require("../Controllers/TranscationController");
 const TokenVerify = require("../middleware/TokenVerify");
 
-router.get("/create",
-    TokenVerify,
-    controller.createtranscation);
+router.get("/create", TokenVerify, controller.createtranscation);
 
 router.post("/get/all/transcation", TokenVerify, controller.allTrnscations);
 
@@ -19,7 +17,7 @@ router.post("/event/search/:name", controller.EventSearch);
 
 router.get("/event/category/:id", controller.EventSearchByCategory);
 
-router.post("/order/create", controller.createOrder);
+router.post("/order/create", TokenVerify, controller.createOrder);
 
 router.post("/order/create/multiple", controller.createOrdermultiple);
 

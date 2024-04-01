@@ -49,7 +49,13 @@ router.put(
   controller.RoleUpdate
 );
 
-// ------ get client details 
-router.get("/client/:id", controller.ClientDetails)
+// ------ get client details
+router.get("/client/:id", controller.ClientDetails);
+
+// --- send forgot password otp
+router.post("/forgot/OTP/send", controller.ForgotPasswordSendOTP);
+
+// ---- reset password
+router.post("/resetpassword", controller.ResetPassword);
 
 module.exports = router;

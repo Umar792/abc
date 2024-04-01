@@ -7,7 +7,7 @@ module.exports = {
   // ----- create the carousal
   createCarousal: async (req, res, next) => {
     try {
-      const { heading, paragraph, event } = req.body;
+      const { heading, paragraph, event, isOverLay } = req.body;
       const parseEvent = JSON.parse(req.body.event);
       if (!paragraph || !event) {
         return next(
@@ -26,6 +26,7 @@ module.exports = {
         event: parseEvent,
         paragraph: paragraph,
         image: fileUrl,
+        isOverLay: isOverLay,
       });
       res.status(200).json({
         success: true,
@@ -109,7 +110,7 @@ module.exports = {
       await CraousalModal.findByIdAndDelete(req.params.id);
       if (event.image) {
         const filepath = path.join(__dirname, "../uploads", event.image);
-
+        console.log(filepath);
         fs.unlink(filepath, async (err) => {
           if (err) {
             console.log(`Error in file deleting ${err}`);
@@ -117,12 +118,12 @@ module.exports = {
           }
 
           console.log("File deleted successfully");
+          res.status(200).json({
+            success: true,
+            message: "Carousal deleted successfully",
+          });
         });
       }
-      res.status(200).json({
-        success: true,
-        message: "Carousal deleted successfully",
-      });
     } catch (error) {
       console.log(error);
       next(new ErrorHandler(error.message, 400));

@@ -41,11 +41,13 @@ const UserSchema = new Schema(
     },
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date },
+    OTP: {
+      type: Number,
+    },
   },
   {
     timestamps: true,
-  },
-
+  }
 );
 
 // ---- hash user password

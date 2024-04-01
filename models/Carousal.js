@@ -16,6 +16,10 @@ const CarousalSliderSchema = new Schema({
     required: [true, "Plaese enter the paragrah tex"],
   },
   event: [{}],
+  isOverLay: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const CraousalModal = mongoose.model("carousal", CarousalSliderSchema);

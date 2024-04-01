@@ -248,7 +248,6 @@ module.exports = {
       client_id,
       email_address_id,
     } = req.body;
-    console.log(JSON.stringify(req.body), "client_id");
 
     const orderData = {
       orders: [
@@ -263,12 +262,12 @@ module.exports = {
                 },
               ],
               type: type,
-              ship_to_name: "plkubaid",
+              ship_to_name: req?.user?.firstName,
               // email_address_id: email_address_id,
               // shiptoName: req.user.firstName,
-              shiptoEmail: "plkubaid@gmail.com",
+              shiptoEmail: req.user?.email,
               email_address_attributes: {
-                address: "plkubaid@gmail.com",
+                address: req.user?.email,
               },
             },
           ],

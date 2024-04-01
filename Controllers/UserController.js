@@ -14,12 +14,12 @@ const X_Signature = "z0g8oHXZyOi7Is0qM0KWVvgY9VQLRSadommuh0q6nuQ=";
 const moment = require("moment");
 const S3Client = require("./s3_list");
 const Promise = require("bluebird");
+const SendEmail = require("../middleware/SendEmail");
 
 const tevoClient = new TevoClient({
   apiToken: API_TOKEN,
   apiSecretKey: API_SECRET_KEY,
 });
-
 
 module.exports = {
   // ----- User Registration
@@ -42,8 +42,6 @@ module.exports = {
       if (!password) {
         return next(new ErrorHandler("Plaese Enter Your password", 400));
       }
-
-
 
       //   ----------- know check is User Already Registered
       const isUser = await UserModal.findOne({ email });
@@ -73,54 +71,57 @@ module.exports = {
         // console.log(fileUrl);
       }
 
-
-
-      // ========== create client in ticket Evoulation api 
+      // ========== create client in ticket Evoulation api
       // var client_id;
       const requestBody = {
-        "clients": [{
-          "name": firstName,
-          "email_addresses": [
-            {
-              "address": email
-            }
-          ],
-          "addresses": [
-            {
-              "region": "NJ",
-              "country_code": "US",
-              "postal_code": "07307",
-              "street_address": "333 Washington St Suite 302",
-              "locality": "Jersey City"
-            }]
-        }]
-      }
-      const url = 'https://api.sandbox.ticketevolution.com/v9/clients';
-      tevoClient.postJSON(url, requestBody).then(async (json) => {
-        console.log(json.clients[0]?.id);
-        // return res.send(json);
-        var client_id = json.clients[0]?.id
-        var email_addressesId = json.clients[0]?.email_addresses[0]?.id;
-        //   ---- if not of user then create new User
-        const user = await UserModal.create({
-          email: email,
-          password: password,
-          firstName: firstName,
-          lastName: lastName,
-          phoneNumber: phoneNumber,
-          Avatar: fileUrl,
-          clientId: client_id,
-          emailAddressId: email_addressesId
+        clients: [
+          {
+            name: firstName,
+            email_addresses: [
+              {
+                address: email,
+              },
+            ],
+            addresses: [
+              {
+                region: "NJ",
+                country_code: "US",
+                postal_code: "07307",
+                street_address: "333 Washington St Suite 302",
+                locality: "Jersey City",
+              },
+            ],
+          },
+        ],
+      };
+      const url = "https://api.sandbox.ticketevolution.com/v9/clients";
+      tevoClient
+        .postJSON(url, requestBody)
+        .then(async (json) => {
+          console.log(json.clients[0]?.id);
+          // return res.send(json);
+          var client_id = json.clients[0]?.id;
+          var email_addressesId = json.clients[0]?.email_addresses[0]?.id;
+          //   ---- if not of user then create new User
+          const user = await UserModal.create({
+            email: email,
+            password: password,
+            firstName: firstName,
+            lastName: lastName,
+            phoneNumber: phoneNumber,
+            Avatar: fileUrl,
+            clientId: client_id,
+            emailAddressId: email_addressesId,
+          });
+          res.status(200).json({
+            success: true,
+            message: `Registration Successfully`,
+            user: user,
+          });
+        })
+        .catch((error) => {
+          return next(new ErrorHandler(error.message, 400));
         });
-        res.status(200).json({
-          success: true,
-          message: `Registration Successfully`,
-          user: user,
-        });
-      }).catch((error) => {
-        return next(new ErrorHandler(error.message, 400));
-      });
-
     } catch (error) {
       next(new ErrorHandler(error.message, 400));
     }
@@ -384,13 +385,80 @@ module.exports = {
     }
   },
 
-  // -------  find client information from the ticket api 
+  // -------  find client information from the ticket api
   ClientDetails: async (req, res, next) => {
-    const url = 'https://api.sandbox.ticketevolution.com/v9/clients/' + req.params.id;
-    tevoClient.getJSON(url).then((json) => {
-      return res.send(json);
-    }).catch((err) => {
-      return res.send('error: ' + err);
-    });
-  }
+    const url =
+      "https://api.sandbox.ticketevolution.com/v9/clients/" + req.params.id;
+    tevoClient
+      .getJSON(url)
+      .then((json) => {
+        return res.send(json);
+      })
+      .catch((err) => {
+        return res.send("error: " + err);
+      });
+  },
+
+  // --- forgot password
+  ForgotPasswordSendOTP: async (req, res, next) => {
+    try {
+      const { email } = req.body;
+      if (!email) {
+        return next(new ErrorHandler("Please enter email address", 400));
+      }
+      const User = await UserModal.findOne({ email: email });
+      // ---- check is email exist or not
+      const IsEmail = await UserModal.findOne({ email: email });
+      if (!IsEmail) {
+        return next(new ErrorHandler("Email not exist , try again", 400));
+      }
+      const OTP = Math.floor(1000 + Math.random() * 9000);
+      const message = `Hello ${User?.firstName}, Your ForgotPassword OTP is ${OTP}`;
+      try {
+        await SendEmail({
+          email,
+          subject: "InstaPass, ForgotPassword OTP",
+          message,
+        });
+        User.OTP = OTP;
+        await User.save();
+        res.status(200).json({
+          success: true,
+          message: "OTP send to email successfully",
+        });
+      } catch (error) {
+        next(new ErrorHandler(error.message, 400));
+      }
+    } catch (error) {
+      next(new ErrorHandler(error.message, 400));
+    }
+  },
+
+  // ---- verify opt an change password
+  ResetPassword: async (req, res, next) => {
+    try {
+      const { OTP, NewPassword } = req.body;
+      if (!OTP) {
+        return next(new ErrorHandler("Please Enter OTP", 400));
+      }
+      if (!NewPassword) {
+        return next(new ErrorHandler("Please Enter NewPassword", 400));
+      }
+
+      // --- check is otp is match or not
+      const IsUser = await UserModal.findOne({ OTP: OTP });
+      if (!IsUser) {
+        return next(new ErrorHandler("Invalid or Expired OTP", 400));
+      }
+      IsUser.password = NewPassword;
+      IsUser.OTP = null;
+      await IsUser?.save();
+      res.status(200).json({
+        success: true,
+        message: "Password update successfully",
+      });
+    } catch (error) {
+      next(new ErrorHandler(error.message, 400));
+    }
+  },
 };
