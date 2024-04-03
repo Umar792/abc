@@ -12,6 +12,13 @@ router.post(
   upload.single("file"),
   controller.createEevent
 );
+router.post(
+  "/create/feature",
+  TokenVerify,
+  AdminVerify("admin"),
+  upload.single("file"),
+  controller.createEeventFeature
+);
 router.get("/get", controller.getAllEvents);
 router.delete(
   "/delete/:id",

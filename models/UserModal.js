@@ -33,11 +33,11 @@ const UserSchema = new Schema(
     },
     clientId: {
       type: String,
-      required: [true, "Plaese Enter The Client ID"],
+      // required: [true, "Plaese Enter The Client ID"],
     },
     emailAddressId: {
       type: String,
-      required: [true, "Plaese Enter The Client ID"],
+      // required: [true, "Plaese Enter The Client ID"],
     },
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date },

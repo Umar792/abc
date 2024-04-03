@@ -35,6 +35,7 @@ module.exports = {
       next(new ErrorHandler(error.message, 400));
     }
   },
+
   //   ---- get all events
   getAllEvents: async (req, res, next) => {
     try {
@@ -73,6 +74,32 @@ module.exports = {
       });
     } catch (error) {
       next(new Error(error.message, 400));
+    }
+  },
+
+  // ========== feature
+  createEeventFeature: async (req, res, next) => {
+    try {
+      const { event, isFeatured, paragarph } = req.body;
+      // console.log(req.body);
+      if (!event) {
+        return next(new ErrorHandler("Please Enter Event", 400));
+      }
+
+      await EventModal.create({
+        event: JSON.parse(event),
+        isFeatured,
+        paragarph,
+      });
+      const allEvents = await EventModal.find();
+
+      res.status(200).json({
+        success: true,
+        message: "Event Created successfully",
+        allEvents,
+      });
+    } catch (error) {
+      next(new ErrorHandler(error.message, 400));
     }
   },
 };

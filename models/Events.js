@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const EventSchema = new Schema({
   image: {
     type: String,
-    required: [true, "Plaese select the image"],
+    // required: [true, "Plaese select the image"],
   },
   event: [{}],
   isFeatured: {

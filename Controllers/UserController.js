@@ -287,9 +287,9 @@ module.exports = {
           fs.unlink(filepath, async (err) => {
             if (err) {
               console.log(`Error in file deleting ${err}`);
-              return res
-                .status(400)
-                .json({ message: "Error in file deleting" });
+              // return res
+              //   .status(400)
+              //   .json({ message: "Error in file deleting" });
             }
 
             console.log("File deleted successfully");

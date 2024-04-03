@@ -263,12 +263,12 @@ module.exports = {
               ],
               type: type,
               ship_to_name: req?.user?.firstName,
-              // email_address_id: email_address_id,
-              // shiptoName: req.user.firstName,
-              shiptoEmail: req.user?.email,
-              email_address_attributes: {
-                address: req.user?.email,
-              },
+              email_address_id: req?.user?.email_address_id,
+              shiptoName: req.user.firstName,
+              // shiptoEmail: req.user?.email,
+              // email_address_attributes: {
+              //   address: req.user?.email,
+              // },
             },
           ],
           payments: [
