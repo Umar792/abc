@@ -55,6 +55,13 @@ module.exports = {
       if (req.body.paragraph) {
         carousal.paragraph = req.body.paragraph;
       }
+      if (req.body.isOverLay) {
+        carousal.isOverLay = req.body.isOverLay;
+      }
+      if (req.body.event) {
+        const parseEvent = JSON.parse(req.body.event);
+        carousal.event = parseEvent;
+      }
 
       // Check if there is an uploaded image
       if (req.file) {
@@ -71,7 +78,6 @@ module.exports = {
         });
         const file = req.file.filename;
         const fileUrl = path.join(file);
-        console.log(fileUrl);
         carousal.image = fileUrl;
       }
 

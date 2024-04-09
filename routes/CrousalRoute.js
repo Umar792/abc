@@ -21,6 +21,14 @@ router.post(
   upload.single("file"),
   controller.updateCrusal
 );
+// --- update 
+router.post(
+  "/update",
+  TokenVerify,
+  AdminVerify("admin"),
+  upload.single("file"),
+  controller.updateCrusal
+);
 
 // ---- get carousal
 router.get("/get/carousal", controller.GetCraousal);
