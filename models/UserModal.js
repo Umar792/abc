@@ -10,6 +10,10 @@ const UserSchema = new Schema(
       type: String,
       required: [true, "Please Enter Your First Name"],
     },
+    lastName: {
+      type: String,
+      required: [true, "Please Enter Your Last Name"],
+    },
     phoneNumber: {
       type: String,
       // required: [true, "Please Enter Your Phone Number"],

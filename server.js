@@ -32,7 +32,9 @@ app.use("/api/order", require("./routes/OrderRooute"));
 app.use("/api/payment", require("./routes/PaymentRoute"));
 app.use("/api/carousal", require("./routes/CrousalRoute"));
 app.use("/api/address", require("./routes/UserAddressRouter"));
+app.use("/api/couponcode", require("./routes/CouponCodeRoute"));
 app.use("/api/transcation", require("./routes/TranscationRoute"));
+
 // --- custom Error Handling;
 app.use(require("./middleware/error"));
 

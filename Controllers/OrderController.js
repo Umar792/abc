@@ -140,6 +140,22 @@ module.exports = {
       });
   },
 
+  // ---- send email notify
+  EmailNotify: async function (req, res) {
+    const { orderId } = req.params;
+    const url = `https://api.sandbox.ticketevolution.com/v9/orders/${orderId}/email`;
+    await tevoClient
+      .postJSON(url, {
+        recipients: ["ua46792@gmail.com"],
+      })
+      .then((json) => {
+        return res.send(json);
+      })
+      .catch((err) => {
+        return res.send("error: " + err);
+      });
+  },
+
   // ----- create shipment
   CreateShipMent: async (req, res, next) => {
     const requestBody = req.body;

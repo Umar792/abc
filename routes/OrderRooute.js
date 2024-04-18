@@ -31,4 +31,7 @@ router.post("/Createshipment", controller.CreateShipMent);
 // ---- get pass in google valut
 router.post("/GetPassInGoogleWallet", controller.GetPassToGoogleWallet);
 
+// --- send email notification
+router.post("/email/:orderId", controller.EmailNotify);
+
 module.exports = router;

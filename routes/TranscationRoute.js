@@ -9,6 +9,11 @@ router.post("/get/all/transcation", TokenVerify, controller.allTrnscations);
 
 router.post("/all/:id", controller.findAll);
 
+router.post(
+  "/search/:startDate/:endDate/:page/:lon/:lat",
+  controller.findEentByDate
+);
+
 router.get("/details/:id", controller.EventDetails);
 
 router.get("/event/details/:id", controller.TicketGroup);

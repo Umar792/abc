@@ -142,6 +142,33 @@ module.exports = {
         });
     }
   },
+
+  // --- get Event by location or date
+  findEentByDate: async function (req, res) {
+    let per_page = 21;
+    // var locId = req.params.loc;
+    var page = req.params.page;
+    // let lon = -118.3275139;
+    // let lat = 33.9845124;
+    const startDate = req.params.startDate;
+    const endtDate = req.params.endDate;
+    const lon = req.params.lon !== undefined ? req.params.lon : -118.3275139;
+    const lat = req.params.lat !== undefined ? req.params.lat : 33.9845124;
+    console.log(req.params);
+    console.log(lon);
+    console.log(lat);
+    tevoClient
+      .getJSON(
+        // `https://api.sandbox.ticketevolution.com/v9/events?city_state=${locId}&page=${page}&within=${50}`
+        `https://api.sandbox.ticketevolution.com/v9/events?occurs_at.gte=${startDate}&occurs_at.lte=${endtDate}&page=${page}&lat=${lat}&lon=${lon}&within=${50}        `
+      )
+      .then((json) => {
+        return res.send(json);
+      })
+      .catch((err) => {
+        return res.send("error: " + err);
+      });
+  },
   // ----- details
   EventDetails: async (req, res) => {
     const EventId = req.params.id;
