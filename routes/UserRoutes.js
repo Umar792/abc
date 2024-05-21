@@ -58,4 +58,12 @@ router.post("/forgot/OTP/send", controller.ForgotPasswordSendOTP);
 // ---- reset password
 router.post("/resetpassword", controller.ResetPassword);
 
+// -- get user order by id --admin route
+router.get(
+  "/userOrder/:id",
+  TokenVerify,
+  AdminVerify("admin"),
+  controller.UserOrderById
+);
+
 module.exports = router;

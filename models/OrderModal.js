@@ -10,7 +10,7 @@ const OrderSchema = new Schema(
     },
     user: {
       type: mongoose.Types.ObjectId,
-      ref: "user",
+      ref: "User",
     },
 
     items: [

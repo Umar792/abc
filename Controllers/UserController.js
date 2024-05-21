@@ -1,4 +1,5 @@
 const UserModal = require("../models/UserModal");
+const OrderModal = require("../models/OrderModal");
 const ErrorHandler = require("../utils/errorHandler");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -409,6 +410,23 @@ module.exports = {
       res.status(200).json({
         success: true,
         message: "Password update successfully",
+      });
+    } catch (error) {
+      next(new ErrorHandler(error.message, 400));
+    }
+  },
+
+  // --------
+  UserOrderById: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        return next(new ErrorHandler("Invalid id", 400));
+      }
+      const orders = await OrderModal.find({ user: id });
+      res.status(200).json({
+        success: true,
+        orders,
       });
     } catch (error) {
       next(new ErrorHandler(error.message, 400));

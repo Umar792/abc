@@ -201,6 +201,49 @@ module.exports = {
       next(new ErrorHandler(error.message, 400));
     }
   },
+
+  // ---- get order details by Order id
+  FindOrderbyId: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        return next(new ErrorHandler("Invalid Order id", 400));
+      }
+
+      const order = await OrderModal.findById(id).populate("user");
+      res.status(200).json({
+        success: true,
+        order: order,
+      });
+    } catch (error) {
+      next(new ErrorHandler(error.message, 400));
+    }
+  },
+
+  // ==== update order conroller
+  UpdateOrderController: async (req, res, next) => {
+    try {
+      const { Orderstatus } = req.body;
+      if (!Orderstatus) {
+        return next(new ErrorHandler("Order status is requird", 400));
+      }
+
+      const order = await OrderModal.findById(req.params.id);
+      if (!order) {
+        return next(new ErrorHandler("Order not found", 400));
+      }
+
+      order.status = Orderstatus;
+      await order.save();
+
+      res.status(200).json({
+        success: true,
+        message: "Order updated successfully",
+      });
+    } catch (error) {
+      next(new ErrorHandler(error.message, 400));
+    }
+  },
 };
 
 // ==================== call and object function

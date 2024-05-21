@@ -154,13 +154,11 @@ module.exports = {
     const endtDate = req.params.endDate;
     const lon = req.params.lon !== undefined ? req.params.lon : -118.3275139;
     const lat = req.params.lat !== undefined ? req.params.lat : 33.9845124;
-    console.log(req.params);
-    console.log(lon);
-    console.log(lat);
+
     tevoClient
       .getJSON(
         // `https://api.sandbox.ticketevolution.com/v9/events?city_state=${locId}&page=${page}&within=${50}`
-        `https://api.sandbox.ticketevolution.com/v9/events?occurs_at.gte=${startDate}&occurs_at.lte=${endtDate}&page=${page}&lat=${lat}&lon=${lon}&within=${50}        `
+        `https://api.sandbox.ticketevolution.com/v9/events?occurs_at.gte=${startDate}&occurs_at.lte=${endtDate}&page=${page}&lat=${lat}&lon=${lon}`
       )
       .then((json) => {
         return res.send(json);
