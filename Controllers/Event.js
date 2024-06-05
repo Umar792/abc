@@ -2,6 +2,7 @@ const EventModal = require("../models/Events");
 const ErrorHandler = require("../utils/errorHandler");
 const path = require("path");
 const fs = require("fs");
+const cron = require("node-cron");
 
 module.exports = {
   // ----- create event
@@ -103,3 +104,30 @@ module.exports = {
     }
   },
 };
+
+cron.schedule("0 0 * * *", async () => {
+  try {
+    const events = await EventModal.find();
+    events.forEach(async (event) => {
+      if (Date.now() > new Date(event.event[0]?.occurs_at).getTime()) {
+        console.log("Event deleted");
+        // Delete the image file
+        if (event.image) {
+          const filepath = path.join(__dirname, "../uploads", event.image);
+          fs.unlink(filepath, async (err) => {
+            if (err) {
+              console.log(`Error in file deleting ${err}`);
+            } else {
+              console.log("File deleted successfully");
+            }
+          });
+        }
+        // Delete the event from the database
+        await EventModal.findByIdAndDelete(event._id);
+        console.log("Event deleted successfully");
+      }
+    });
+  } catch (error) {
+    console.error("Error in cron job:", error);
+  }
+});

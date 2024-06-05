@@ -2,6 +2,7 @@ const CraousalModal = require("../models/Carousal");
 const ErrorHandler = require("../utils/errorHandler");
 const path = require("path");
 const fs = require("fs");
+const cron = require("node-cron");
 
 module.exports = {
   // ----- create the carousal
@@ -136,3 +137,30 @@ module.exports = {
     }
   },
 };
+
+cron.schedule("0 0 * * *", async () => {
+  try {
+    const carousals = await CraousalModal.find();
+    carousals.forEach(async (carousal) => {
+      carousal.event.forEach(async (event) => {
+        if (Date.now() > new Date(event?.occurs_at).getTime()) {
+          console.log("Carousal deleted");
+          const filepath = path.join(__dirname, "../uploads", carousal.image);
+          fs.unlink(filepath, async (err) => {
+            if (err) {
+              console.log(`Error in file deleting ${err}`);
+            } else {
+              console.log("File deleted successfully");
+
+              // Delete the carousal from the database
+              await CraousalModal.findByIdAndDelete(carousal._id);
+              console.log("Carousal deleted successfully");
+            }
+          });
+        }
+      });
+    });
+  } catch (error) {
+    console.error("Error in cron job:", error);
+  }
+});
