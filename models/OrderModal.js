@@ -45,6 +45,20 @@ const OrderSchema = new Schema(
       type: String,
       required: [true, "Plaese Enter Shipto Email"],
     },
+    phone: {
+      type: String,
+    },
+    country: {
+      type: String
+    },
+    city: {
+      type: String
+    }, state: {
+      type: String
+    },
+    address: {
+      type: String
+    },
     status: {
       type: String,
       default: "Pending",

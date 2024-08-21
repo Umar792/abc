@@ -5,7 +5,7 @@ const AdminVeerify = require("../middleware/AdminVerify");
 const Controller = require("../Controllers/CouponCodeController");
 
 // ---
-router.post("/apply", TokenVerify, Controller.ApplyCouponCode);
+router.post("/apply", Controller.ApplyCouponCode);
 router.get(
   "/all",
   TokenVerify,

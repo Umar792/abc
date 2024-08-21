@@ -48,6 +48,7 @@ const UserSchema = new Schema(
     OTP: {
       type: Number,
     },
+    primary_shipping_address_id : { type: String },
   },
   {
     timestamps: true,

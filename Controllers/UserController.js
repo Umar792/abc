@@ -101,8 +101,9 @@ module.exports = {
       tevoClient
         .postJSON(url, requestBody)
         .then(async (json) => {
-          console.log(json.clients[0]?.id);
+          // console.log(json.clients[0].primary_shipping_address);
           // return res.send(json);
+          const Client = json.clients[0]
           var client_id = json.clients[0]?.id;
           var email_addressesId = json.clients[0]?.email_addresses[0]?.id;
           //   ---- if not of user then create new User
@@ -115,6 +116,7 @@ module.exports = {
             Avatar: fileUrl,
             clientId: client_id,
             emailAddressId: email_addressesId,
+            primary_shipping_address_id : Client.primary_shipping_address.id
           });
           res.status(200).json({
             success: true,

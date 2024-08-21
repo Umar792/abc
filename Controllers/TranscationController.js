@@ -191,6 +191,7 @@ module.exports = {
     // let lon = -118.3275139;
     let lon = req.body?.location?.lon;
     // let lat = 33.9845124;
+    console.log(req.body)
     tevoClient
       .getJSON(
         `https://api.sandbox.ticketevolution.com/v9/events?q=${req.params.name}&fuzzy=true&per_page=` +
@@ -272,7 +273,11 @@ module.exports = {
       name,
       client_id,
       email_address_id,
+      userName,
+      email , 
+
     } = req.body;
+
 
     const orderData = {
       orders: [
@@ -287,13 +292,12 @@ module.exports = {
                 },
               ],
               type: type,
-              ship_to_name: req?.user?.firstName,
-              email_address_id: req?.user?.email_address_id,
-              shiptoName: req.user.firstName,
-              shiptoEmail: req.user?.email,
+              ship_to_name: userName,
+              ship_to_email : email,
               email_address_attributes: {
-                address: req.user?.email,
+                address: email,
               },
+              // primary_shipping_address_id : req.user.primary_shipping_address_id
             },
           ],
           payments: [
@@ -313,43 +317,17 @@ module.exports = {
           // buyer_reference_number: "3161",
           // tax_signature: "9166e5ac-c663-4236-ae8b-76eb890a0468",
           // buyer_id: 8918,
-          buyer_reference_number: "8918",
-          external_notes: "These notes will be visible to all parties",
-          internal_notes:
-            "These notes will be visible only to your office (1937)",
         },
       ],
-      // orders: [
-      //   {
-      //     shipped_items: [
-      //       {
-      //         type: type,
-      //         email_address_id: email_address_id,
-      //         items: [
-      //           {
-      //             ticket_group_id: id,
-      //             price: qty,
-      //             quantity: price,
-      //             // ticket_group_signature:
-      //             //   "dTZuZ3BEQit0RTFicng0RXMzOEI0Z2h3UDRxNXdqdVdlN0srYXMzYjFLND0tLW5STkNmUlpPMzJiSUplTzhwR3hQcmc9PQ==--86f1de9f4585b4f3116d8b7ec8b8f5006672f91c",
-      //           },
-      //         ],
-      //       },
-      //     ],
-      //     //  "billing_address_id":"639548",
-      //     seller_id: 8918,
-      //     client_id: client_id,
-      //     instructions: "These instructions will be visible to everyone",
-      //   },
-      // ],
     };
+
 
     const url = "https://api.sandbox.ticketevolution.com/v9/orders";
     try {
       const response = await tevoClient.postJSON(url, orderData);
-
       return res.status(200).send(response);
     } catch (err) {
+      console.log(err)
       return res.send("Error: " + err);
     }
   },

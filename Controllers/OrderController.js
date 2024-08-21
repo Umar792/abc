@@ -3,6 +3,9 @@ const ErrorHandler = require("../utils/errorHandler");
 const { GoogleAuth } = require("google-auth-library");
 const jwt = require("jsonwebtoken");
 const TevoClient = require("ticketevolution-node");
+const path = require("path");
+const ejs = require('ejs');
+const SendEmail = require("../middleware/SendEmail");
 // const API_TOKEN = "eebbfa6848026f8e3f6b1ac5f87e1e46";
 // const API_SECRET_KEY = "iEzrOJOJ0RTDqRXOnHAZX5ceyfdGITbNy1qd2EXV";
 const API_TOKEN = "10cbbac87aa33cf9818fc1046bca0044";
@@ -61,9 +64,18 @@ module.exports = {
         order_Id,
         item_id,
         cart,
+        userName,
+        email,
+        phone,
+        addres,
+        city,
+        state,
+        country,
+        ticket_group_id
       } = req.body;
+      console.log(ticket_group_id)
       const newOrder = await OrderModal.create({
-        user: req.user._id,
+        user: req.user === null ? null : req.user._id,
         totalAmount: totalamount,
 
         items: [
@@ -75,19 +87,56 @@ module.exports = {
           },
         ],
         type: type,
-        shiptoName: req.user.firstName,
-        shiptoEmail: req.user.email,
+        shiptoName: userName,
+        shiptoEmail: email,
         payments: payments,
         service_fee: service_fee,
         tax: tax,
         order_Id: order_Id,
         item_id: item_id,
+        phone,
+        addres,
+        city,
+        state,
+        country,
       });
-      res.status(200).json({
-        success: true,
-        message: "Order created successfully",
-        // newOrder,
+      const templatePath = path.join(__dirname, '..', 'templates', 'Ordertemplate.ejs');
+      
+      const emailContent = await ejs.renderFile(templatePath, {
+        title: name,
+        qty: qty,
+        price: price,
+        tax: tax,
+        orderId: order_Id,
+        discount: 0,
+        total: totalamount,
+        Address: addres,
+        Country: country,
+        State: state,
+        City: city,
+        ticket_group_id : ticket_group_id
       });
+      try {
+
+
+        await SendEmail({
+          email : email,
+          subject: 'Instapass Order',
+          html : true,
+          template : emailContent
+        });
+
+        res.status(200).json({
+          success: true,
+          message: "Order created successfully",
+          // newOrder,
+        });
+      } catch (error) {
+      next(new ErrorHandler(error.message, 400));
+        
+      }
+
+     
     } catch (error) {
       next(new ErrorHandler(error.message, 400));
     }
