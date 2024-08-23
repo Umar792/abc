@@ -90,15 +90,15 @@ module.exports = {
       tevoClient
         .getJSON(
           "https://api.sandbox.ticketevolution.com/v9/events/search?per_page=" +
-            per_page +
-            "&page=" +
-            req.params.id +
-            "&occurs_at.gte=" +
-            encodeURIComponent(date.toISOString()) +
-            "&lat=" +
-            lat +
-            "&lon=" +
-            lon,
+          per_page +
+          "&page=" +
+          req.params.id +
+          "&occurs_at.gte=" +
+          encodeURIComponent(date.toISOString()) +
+          "&lat=" +
+          lat +
+          "&lon=" +
+          lon,
           {
             Headers: {
               "X-Token": API_TOKEN,
@@ -120,11 +120,11 @@ module.exports = {
       tevoClient
         .getJSON(
           "https://api.sandbox.ticketevolution.com/v9/events/search?per_page=" +
-            per_page +
-            "&page=" +
-            req.params.id +
-            "&occurs_at.gte=" +
-            encodeURIComponent(date.toISOString())
+          per_page +
+          "&page=" +
+          req.params.id +
+          "&occurs_at.gte=" +
+          encodeURIComponent(date.toISOString())
           //   {
           //     Headers: {
           //       "X-Token": API_TOKEN,
@@ -195,11 +195,11 @@ module.exports = {
     tevoClient
       .getJSON(
         `https://api.sandbox.ticketevolution.com/v9/events?q=${req.params.name}&fuzzy=true&per_page=` +
-          100 +
-          "&page=" +
-          1 +
-          "&occurs_at.gte=" +
-          encodeURIComponent(date.toISOString())
+        100 +
+        "&page=" +
+        1 +
+        "&occurs_at.gte=" +
+        encodeURIComponent(date.toISOString())
         // +
         // "&lat=" +
         // lat +
@@ -223,11 +223,11 @@ module.exports = {
     tevoClient
       .getJSON(
         `https://api.sandbox.ticketevolution.com/v9/events?category_id=${req.params.id}&category_tree=true&per_page=` +
-          100 +
-          "&page=" +
-          1 +
-          "&occurs_at.gte=" +
-          encodeURIComponent(date.toISOString())
+        100 +
+        "&page=" +
+        1 +
+        "&occurs_at.gte=" +
+        encodeURIComponent(date.toISOString())
         // +
         // "&lat=" +
         // lat +
@@ -274,7 +274,7 @@ module.exports = {
       client_id,
       email_address_id,
       userName,
-      email , 
+      email,
 
     } = req.body;
 
@@ -293,7 +293,7 @@ module.exports = {
               ],
               type: type,
               ship_to_name: userName,
-              ship_to_email : email,
+              ship_to_email: email,
               email_address_attributes: {
                 address: email,
               },
@@ -396,6 +396,40 @@ module.exports = {
       return res.send("Error: " + err);
     }
   },
+
+
+  // ----- get tax price on an seat 
+  getTaxPrice: async (req, res) => {
+    try {
+
+
+      const { ticket_group_id, quantity, payment_type } = req.body;
+      if (!ticket_group_id || !quantity || !payment_type) {
+        return res.status(400).json({
+          success: false,
+          message: "Please provide all required fields"
+        });
+      }
+
+      const body = {
+        ticket_group_id,
+        quantity,
+        // payment_type
+      };
+
+      const url = `https://api.sandbox.ticketevolution.com/v9/tax_quotes`;
+      const response = await tevoClient.postJSON(url, body);
+      return res.status(200).send(response);
+
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message
+      });
+
+    }
+
+  },
 };
 
 let getImageUrlFromAws = async function (events) {
@@ -417,9 +451,9 @@ let getImageUrlFromAws = async function (events) {
           .validSignedURL(
             s3Bucket,
             imageFolder +
-              "tablet/" +
-              data.performances[0].performer.slug +
-              ".jpg"
+            "tablet/" +
+            data.performances[0].performer.slug +
+            ".jpg"
           )
           .then(function (tabletUrlResponseFromAws) {
             data.tabletUrl = tabletUrlResponseFromAws;

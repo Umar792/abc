@@ -106,11 +106,14 @@ module.exports = {
 };
 
 cron.schedule("0 0 * * *", async () => {
+// cron.schedule("*/10 * * * * *", async () => {
   try {
+
+
     const events = await EventModal.find();
+
     events.forEach(async (event) => {
-      if (Date.now() > new Date(event.event[0]?.occurs_at).getTime()) {
-        console.log("Event deleted");
+      if (Date.now() > new Date(event.event[0]?.occurs_at).getTime() + 86400000) {
         // Delete the image file
         if (event.image) {
           const filepath = path.join(__dirname, "../uploads", event.image);
@@ -124,7 +127,7 @@ cron.schedule("0 0 * * *", async () => {
         }
         // Delete the event from the database
         await EventModal.findByIdAndDelete(event._id);
-        console.log("Event deleted successfully");
+        console.log("Event deleted successfully" , Date.now());
       }
     });
   } catch (error) {

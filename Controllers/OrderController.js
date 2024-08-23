@@ -71,9 +71,8 @@ module.exports = {
         city,
         state,
         country,
-        ticket_group_id
+        
       } = req.body;
-      console.log(ticket_group_id)
       const newOrder = await OrderModal.create({
         user: req.user === null ? null : req.user._id,
         totalAmount: totalamount,
@@ -114,7 +113,7 @@ module.exports = {
         Country: country,
         State: state,
         City: city,
-        ticket_group_id : ticket_group_id
+        id : id
       });
       try {
 

@@ -32,4 +32,6 @@ router.get("/comp", controller.allcompanies);
 
 router.get("/image", controller.getImageurl);
 
+router.post("/tax/price" , controller.getTaxPrice)
+
 module.exports = router;
