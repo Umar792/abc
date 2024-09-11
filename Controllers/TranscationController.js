@@ -10,7 +10,6 @@ const X_Signature = "z0g8oHXZyOi7Is0qM0KWVvgY9VQLRSadommuh0q6nuQ=";
 const moment = require("moment");
 const S3Client = require("./s3_list");
 const Promise = require("bluebird");
-const OrderModal = require("../models/OrderModal");
 
 const tevoClient = new TevoClient({
   apiToken: API_TOKEN,
@@ -414,11 +413,14 @@ module.exports = {
       const body = {
         ticket_group_id,
         quantity,
-        // payment_type
+        payment_type,
+      
       };
+   
+  
 
-      const url = `https://api.sandbox.ticketevolution.com/v9/tax_quotes`;
-      const response = await tevoClient.postJSON(url, body);
+      const url = `https://api.sandbox.ticketevolution.com/v9/tax_quotes` ;
+      const response = await tevoClient.postJSON(url, body );
       return res.status(200).send(response);
 
     } catch (error) {

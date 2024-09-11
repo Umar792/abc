@@ -63,14 +63,9 @@ module.exports = {
         qty,
         order_Id,
         item_id,
-        cart,
-        userName,
-        email,
-        phone,
-        addres,
-        city,
-        state,
-        country,
+        fname,
+        lname,
+        email
         
       } = req.body;
       const newOrder = await OrderModal.create({
@@ -86,33 +81,25 @@ module.exports = {
           },
         ],
         type: type,
-        shiptoName: userName,
+        shiptoName: fname + " " + lname,
         shiptoEmail: email,
         payments: payments,
         service_fee: service_fee,
         tax: tax,
         order_Id: order_Id,
         item_id: item_id,
-        phone,
-        addres,
-        city,
-        state,
-        country,
+
       });
       const templatePath = path.join(__dirname, '..', 'templates', 'Ordertemplate.ejs');
       
       const emailContent = await ejs.renderFile(templatePath, {
-        title: name,
+        title: fname + " " + lname ,
         qty: qty,
         price: price,
         tax: tax,
         orderId: order_Id,
         discount: 0,
         total: totalamount,
-        Address: addres,
-        Country: country,
-        State: state,
-        City: city,
         id : id
       });
       try {
