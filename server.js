@@ -1,9 +1,30 @@
 const express = require("express");
+const cluster = require('cluster');
 const app = express();
 const path = require("path");
 var morgan = require("morgan");
-// ---- dotenv
+const os = require('os');
 require("dotenv").config();
+require("./DB/conn");
+const numCPUs = os.cpus().length;
+
+
+
+if(cluster.isMaster){
+  console.log(`Master ${process.pid} is running`);
+  for(let i = 0; i < numCPUs; i++){
+    cluster.fork();
+  }
+  cluster.on("exit", (worker, code, signal) => {
+    console.log(`worker ${worker.process.pid} died`);
+    cluster.fork();
+  });
+}else{
+
+
+
+
+// ---- dotenv
 
 // ----cors
 const cors = require("cors");
@@ -20,7 +41,6 @@ app.use(bodyParser.urlencoded({ extended: false, limit: "50mb" }));
 app.use(bodyParser.json({ limit: "50mb" }));
 
 // --- db connection
-require("./DB/conn");
 
 // Serve static files from the 'uploads' directory
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -47,7 +67,7 @@ app.get("/", (req, res) => {
 
 // --- server
 const server = app.listen(process.env.PORT, () => {
-  console.log(`Server listening on port ${process.env.PORT}`);
+  console.log(`Worker ${process.pid} Server listening on port ${process.env.PORT}`);
 });
 
 // ----Error Handling
@@ -69,3 +89,5 @@ process.on("unhandledRejection", (err) => {
     process.exit(1);
   });
 });
+
+}
