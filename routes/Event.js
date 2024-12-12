@@ -20,6 +20,7 @@ router.post(
   controller.createEeventFeature
 );
 router.get("/get", controller.getAllEvents);
+
 router.delete(
   "/delete/:id",
   TokenVerify,

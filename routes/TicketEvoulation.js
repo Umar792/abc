@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const controller = require("../Controllers/TranscationController");
+const controller = require("../Controllers/TicketEvoulationController");
 const TokenVerify = require("../middleware/TokenVerify");
 
 router.get("/create", TokenVerify, controller.createtranscation);

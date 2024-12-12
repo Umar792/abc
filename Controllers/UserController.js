@@ -5,16 +5,11 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const path = require("path");
-
 const TevoClient = require("ticketevolution-node");
-// const API_TOKEN = "eebbfa6848026f8e3f6b1ac5f87e1e46";
-// const API_SECRET_KEY = "iEzrOJOJ0RTDqRXOnHAZX5ceyfdGITbNy1qd2EXV";
-const API_TOKEN = "10cbbac87aa33cf9818fc1046bca0044";
-const API_SECRET_KEY = "7bThxZPz3L+KdAdGsjcM9c99mCoyvXt3jH2MDy0/";
-const X_Signature = "z0g8oHXZyOi7Is0qM0KWVvgY9VQLRSadommuh0q6nuQ=";
+const API_TOKEN = process.env.API_TOKEN;
+const API_SECRET_KEY = process.env.API_SECRET_KEY;
+const X_Signature = process.env.X_Signature;
 const moment = require("moment");
-const S3Client = require("./s3_list");
-const Promise = require("bluebird");
 const SendEmail = require("../middleware/SendEmail");
 
 const tevoClient = new TevoClient({
@@ -29,19 +24,19 @@ module.exports = {
       //   -- get Data from the body
       const { firstName, lastName, phoneNumber, email, password } = req.body;
       if (!firstName) {
-        return next(new ErrorHandler("Plaese Enter Your First Name", 400));
+        return next(new ErrorHandler("Please Enter Your First Name", 400));
       }
       if (!lastName) {
-        return next(new ErrorHandler("Plaese Enter Your Last Name", 400));
+        return next(new ErrorHandler("Please Enter Your Last Name", 400));
       }
       if (!phoneNumber) {
-        return next(new ErrorHandler("Plaese Enter Your Mobile Number", 400));
+        return next(new ErrorHandler("Please Enter Your Mobile Number", 400));
       }
       if (!email) {
-        return next(new ErrorHandler("Plaese Enter Your Email Address", 400));
+        return next(new ErrorHandler("Please Enter Your Email Address", 400));
       }
       if (!password) {
-        return next(new ErrorHandler("Plaese Enter Your password", 400));
+        return next(new ErrorHandler("Please Enter Your password", 400));
       }
 
       //   ----------- know check is User Already Registered
@@ -55,7 +50,7 @@ module.exports = {
               console.log(`Error in file deleting ${err}`);
               // res.status(400).json({ message: "Error in file deleting" });
             } else {
-              console.log("file deleted successfuly");
+              console.log("file deleted successfully");
               // res.status(400).json({ message: "file deleting" });
             }
           });

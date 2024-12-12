@@ -6,11 +6,9 @@ const TevoClient = require("ticketevolution-node");
 const path = require("path");
 const ejs = require('ejs');
 const SendEmail = require("../middleware/SendEmail");
-// const API_TOKEN = "eebbfa6848026f8e3f6b1ac5f87e1e46";
-// const API_SECRET_KEY = "iEzrOJOJ0RTDqRXOnHAZX5ceyfdGITbNy1qd2EXV";
-const API_TOKEN = "10cbbac87aa33cf9818fc1046bca0044";
-const API_SECRET_KEY = "7bThxZPz3L+KdAdGsjcM9c99mCoyvXt3jH2MDy0/";
-const X_Signature = "z0g8oHXZyOi7Is0qM0KWVvgY9VQLRSadommuh0q6nuQ=";
+const API_TOKEN = process.env.API_TOKEN;
+const API_SECRET_KEY = process.env.API_SECRET_KEY;
+const X_Signature = process.env.X_Signature
 
 const tevoClient = new TevoClient({
   apiToken: API_TOKEN,

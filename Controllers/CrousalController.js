@@ -143,7 +143,8 @@ cron.schedule("0 0 * * *", async () => {
     const carousals = await CraousalModal.find();
     carousals.forEach(async (carousal) => {
       carousal.event.forEach(async (event) => {
-        if (Date.now() > new Date(event?.occurs_at).getTime() + 86400000) {
+        // if (Date.now() > new Date(event?.occurs_at).getTime() + 86400000) {
+        if (Date.now() >  new Date(event.event[0]?.occurs_at).getTime() + 86400000) {
           const filepath = path.join(__dirname, "../uploads", carousal.image);
           fs.unlink(filepath, async (err) => {
             if (err) {
